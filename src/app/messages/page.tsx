@@ -3,17 +3,46 @@
 
 import { useState } from 'react';
 import { NexusSidebar } from '@/components/layout/sidebar';
-import { MOCK_THREADS } from '@/lib/mock-data';
+import { MOCK_THREADS, MessageThread } from '@/lib/mock-data';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Search, Send, MoreVertical, MessageSquare } from 'lucide-react';
+import { Search, Send, MoreVertical } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export default function MessagesPage() {
-  const [activeThreadId, setActiveThreadId] = useState(MOCK_THREADS[0].id);
-  const activeThread = MOCK_THREADS.find(t => t.id === activeThreadId) || MOCK_THREADS[0];
+  const [threads, setThreads] = useState<MessageThread[]>(MOCK_THREADS);
+  const [activeThreadId, setActiveThreadId] = useState(threads[0].id);
+  const [inputValue, setInputValue] = useState('');
+
+  const activeThread = threads.find(t => t.id === activeThreadId) || threads[0];
+
+  const handleSendMessage = () => {
+    if (!inputValue.trim()) return;
+
+    const newMessage = {
+      id: Date.now().toString(),
+      sender: 'me' as const,
+      text: inputValue,
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+
+    const updatedThreads = threads.map(thread => {
+      if (thread.id === activeThreadId) {
+        return {
+          ...thread,
+          messages: [...thread.messages, newMessage],
+          lastMessage: inputValue,
+          time: 'Just now'
+        };
+      }
+      return thread;
+    });
+
+    setThreads(updatedThreads);
+    setInputValue('');
+  };
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -31,7 +60,7 @@ export default function MessagesPage() {
             </div>
             <ScrollArea className="flex-1">
               <div className="divide-y divide-border/50">
-                {MOCK_THREADS.map((thread) => (
+                {threads.map((thread) => (
                   <div 
                     key={thread.id} 
                     onClick={() => setActiveThreadId(thread.id)}
@@ -126,8 +155,15 @@ export default function MessagesPage() {
                 <Input 
                   placeholder={`Write a message to ${activeThread.user.name}...`} 
                   className="bg-muted/20 border-border/50 focus:border-primary/50" 
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                 />
-                <Button size="icon" className="shrink-0 shadow-lg shadow-primary/20">
+                <Button 
+                  size="icon" 
+                  className="shrink-0 shadow-lg shadow-primary/20"
+                  onClick={handleSendMessage}
+                >
                   <Send className="w-4 h-4" />
                 </Button>
               </div>

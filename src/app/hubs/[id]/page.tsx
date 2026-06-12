@@ -1,5 +1,9 @@
+
+'use client';
+
+import { useState, useEffect, use } from 'react';
 import { NexusSidebar } from '@/components/layout/sidebar';
-import { MOCK_GAMES, MOCK_CHATS } from '@/lib/mock-data';
+import { MOCK_GAMES, MOCK_CHATS, ChatMessage } from '@/lib/mock-data';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
@@ -9,12 +13,31 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Send, Users, Info, ShieldCheck } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
-export default async function HubPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
+export default function HubPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const game = MOCK_GAMES.find((g) => g.id === id);
-  const chats = MOCK_CHATS[id] || [];
+  const initialChats = MOCK_CHATS[id] || [];
+  
+  const [messages, setMessages] = useState<ChatMessage[]>(initialChats);
+  const [inputValue, setInputValue] = useState('');
 
   if (!game) notFound();
+
+  const handleSendMessage = () => {
+    if (!inputValue.trim()) return;
+
+    const newMessage: ChatMessage = {
+      id: Date.now().toString(),
+      userId: 'me',
+      userName: 'Pilot_Alex',
+      userAvatar: 'https://picsum.photos/seed/pilot/40/40',
+      content: inputValue,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+
+    setMessages([...messages, newMessage]);
+    setInputValue('');
+  };
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -58,7 +81,7 @@ export default async function HubPage({ params }: { params: Promise<{ id: string
           <div className="flex-1 flex flex-col p-6 overflow-hidden">
             <ScrollArea className="flex-1 pr-4 mb-4">
               <div className="space-y-6">
-                {chats.map((msg) => (
+                {messages.map((msg) => (
                   <div key={msg.id} className="flex gap-4 group animate-slide-up">
                     <Avatar className="w-10 h-10 border border-primary/20">
                       <AvatarImage src={msg.userAvatar} />
@@ -71,7 +94,9 @@ export default async function HubPage({ params }: { params: Promise<{ id: string
                         </span>
                         <span className="text-[10px] text-muted-foreground">{msg.timestamp}</span>
                       </div>
-                      <div className="bg-muted/40 rounded-2xl rounded-tl-none px-4 py-2 text-sm border border-border/50 max-w-[80%]">
+                      <div className={`rounded-2xl rounded-tl-none px-4 py-2 text-sm border max-w-[80%] ${
+                        msg.userId === 'me' ? 'bg-primary/20 border-primary/30' : 'bg-muted/40 border-border/50'
+                      }`}>
                         {msg.content}
                       </div>
                     </div>
@@ -84,10 +109,14 @@ export default async function HubPage({ params }: { params: Promise<{ id: string
               <Input
                 placeholder={`Send a message to ${game.name} hub...`}
                 className="pr-12 py-6 bg-card border-border/50 focus:border-primary/50 rounded-xl"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
               />
               <Button
                 size="icon"
                 className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg"
+                onClick={handleSendMessage}
               >
                 <Send className="w-4 h-4" />
               </Button>
