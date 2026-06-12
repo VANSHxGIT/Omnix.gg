@@ -2,51 +2,39 @@
   "placeholderImages": [
     {
       "id": "minecraft-hero",
-      "description": "Epic Minecraft landscape",
-      "imageUrl": "https://picsum.photos/seed/11/1200/400",
-      "imageHint": "minecraft world"
+      "description": "Vibrant block-based world landscape",
+      "imageUrl": "https://picsum.photos/seed/mc-landscape/1200/400",
+      "imageHint": "minecraft environment"
     },
     {
       "id": "valorant-hero",
-      "description": "Tactical shooter abstract art",
-      "imageUrl": "https://picsum.photos/seed/22/1200/400",
-      "imageHint": "tactical shooter"
+      "description": "Neon tactical shooter arena",
+      "imageUrl": "https://picsum.photos/seed/valo-arena/1200/400",
+      "imageHint": "tactical arena"
     },
     {
       "id": "elden-ring-hero",
-      "description": "Dark fantasy landscape",
-      "imageUrl": "https://picsum.photos/seed/33/1200/400",
+      "description": "Epic dark fantasy erdtree landscape",
+      "imageUrl": "https://picsum.photos/seed/elden-world/1200/400",
       "imageHint": "dark fantasy"
     },
     {
-      "id": "user-avatar-1",
-      "description": "Gamer profile avatar",
-      "imageUrl": "https://picsum.photos/seed/101/150/150",
-      "imageHint": "gamer portrait"
+      "id": "game-poster-minecraft",
+      "description": "Minecraft adventure poster",
+      "imageUrl": "https://picsum.photos/seed/mc-post/300/450",
+      "imageHint": "voxel art"
     },
     {
-      "id": "user-avatar-2",
-      "description": "Female gamer avatar",
-      "imageUrl": "https://picsum.photos/seed/102/150/150",
-      "imageHint": "gamer female"
+      "id": "game-poster-valorant",
+      "description": "Valorant agent squad poster",
+      "imageUrl": "https://picsum.photos/seed/valo-post/300/450",
+      "imageHint": "hero shooter"
     },
     {
-      "id": "game-poster-1",
-      "description": "Minecraft game poster",
-      "imageUrl": "https://picsum.photos/seed/201/300/450",
-      "imageHint": "game art"
-    },
-    {
-      "id": "game-poster-2",
-      "description": "Valorant game poster",
-      "imageUrl": "https://picsum.photos/seed/202/300/450",
-      "imageHint": "shooter art"
-    },
-    {
-      "id": "game-poster-3",
-      "description": "Elden Ring game poster",
-      "imageUrl": "https://picsum.photos/seed/203/300/450",
-      "imageHint": "fantasy art"
+      "id": "game-poster-elden",
+      "description": "Elden Ring tarnished poster",
+      "imageUrl": "https://picsum.photos/seed/elden-post/300/450",
+      "imageHint": "epic fantasy"
     }
   ]
 }

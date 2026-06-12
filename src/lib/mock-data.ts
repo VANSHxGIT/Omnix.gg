@@ -14,8 +14,8 @@ export const MOCK_GAMES: Game[] = [
     id: 'minecraft',
     name: 'Minecraft',
     description: 'Build, explore, and survive in an infinite world of blocks.',
-    poster: 'https://picsum.photos/seed/201/300/450',
-    hero: 'https://picsum.photos/seed/11/1200/400',
+    poster: 'https://picsum.photos/seed/mc-post/300/450',
+    hero: 'https://picsum.photos/seed/mc-landscape/1200/400',
     category: 'Sandbox',
     playersOnline: 4250,
   },
@@ -23,8 +23,8 @@ export const MOCK_GAMES: Game[] = [
     id: 'valorant',
     name: 'Valorant',
     description: 'A 5v5 character-based tactical shooter where precise gunplay meets unique agent abilities.',
-    poster: 'https://picsum.photos/seed/202/300/450',
-    hero: 'https://picsum.photos/seed/22/1200/400',
+    poster: 'https://picsum.photos/seed/valo-post/300/450',
+    hero: 'https://picsum.photos/seed/valo-arena/1200/400',
     category: 'FPS',
     playersOnline: 8120,
   },
@@ -32,8 +32,8 @@ export const MOCK_GAMES: Game[] = [
     id: 'elden-ring',
     name: 'Elden Ring',
     description: 'Rise, Tarnished, and be guided by grace to brandish the power of the Elden Ring.',
-    poster: 'https://picsum.photos/seed/203/300/450',
-    hero: 'https://picsum.photos/seed/33/1200/400',
+    poster: 'https://picsum.photos/seed/elden-post/300/450',
+    hero: 'https://picsum.photos/seed/elden-world/1200/400',
     category: 'RPG',
     playersOnline: 1240,
   },
@@ -57,6 +57,10 @@ export const MOCK_CHATS: Record<string, ChatMessage[]> = {
     { id: '3', userId: 'u3', userName: 'JettMain99', userAvatar: 'https://picsum.photos/seed/103/150/150', content: 'Need a Sage for ranked. Gold 2 lobby.', timestamp: '13:02' },
     { id: '4', userId: 'u4', userName: 'VandalWhiz', userAvatar: 'https://picsum.photos/seed/104/150/150', content: 'That last update to Phoenix is insane.', timestamp: '13:05' },
   ],
+  'elden-ring': [
+    { id: '5', userId: 'u5', userName: 'TarnishedOne', userAvatar: 'https://picsum.photos/seed/105/150/150', content: 'Malenia is actually impossible. Help?', timestamp: '14:20' },
+    { id: '6', userId: 'u6', userName: 'GraceSeeker', userAvatar: 'https://picsum.photos/seed/106/150/150', content: 'Try using bleed build, it melts her.', timestamp: '14:22' },
+  ]
 };
 
 export interface MessageThread {
@@ -69,6 +73,12 @@ export interface MessageThread {
   lastMessage: string;
   time: string;
   unread: boolean;
+  messages: Array<{
+    id: string;
+    sender: 'me' | 'them';
+    text: string;
+    time: string;
+  }>;
 }
 
 export const MOCK_THREADS: MessageThread[] = [
@@ -77,21 +87,34 @@ export const MOCK_THREADS: MessageThread[] = [
     user: { name: 'CyberCat', avatar: 'https://picsum.photos/seed/cat/150/150', status: 'online' },
     lastMessage: 'Yo! Ready for that Minecraft session?',
     time: '5m ago',
-    unread: true
+    unread: true,
+    messages: [
+      { id: 'm1', sender: 'them', text: 'Hey, are you joining the server?', time: '10:00 AM' },
+      { id: 'm2', sender: 'me', text: 'Yeah, just finishing up dinner.', time: '10:05 AM' },
+      { id: 'm3', sender: 'them', text: 'Yo! Ready for that Minecraft session?', time: '10:10 AM' },
+    ]
   },
   {
     id: 't2',
     user: { name: 'ShadowBlade', avatar: 'https://picsum.photos/seed/shadow/150/150', status: 'offline' },
     lastMessage: 'Good games today, GG.',
     time: '2h ago',
-    unread: false
+    unread: false,
+    messages: [
+      { id: 'm1', sender: 'me', text: 'That clutch on Haven was insane.', time: '1:00 PM' },
+      { id: 'm2', sender: 'them', text: 'Total luck honestly haha.', time: '1:05 PM' },
+      { id: 'm3', sender: 'them', text: 'Good games today, GG.', time: '1:10 PM' },
+    ]
   },
   {
     id: 't3',
     user: { name: 'Starlight_99', avatar: 'https://picsum.photos/seed/star/150/150', status: 'online' },
     lastMessage: 'Did you see the Elden Ring DLC trailer?',
     time: '1d ago',
-    unread: false
+    unread: false,
+    messages: [
+      { id: 'm1', sender: 'them', text: 'Did you see the Elden Ring DLC trailer?', time: 'Yesterday' },
+    ]
   }
 ];
 

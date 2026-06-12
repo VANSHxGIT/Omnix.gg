@@ -1,4 +1,7 @@
 
+'use client';
+
+import { useState } from 'react';
 import { NexusSidebar } from '@/components/layout/sidebar';
 import { MOCK_THREADS } from '@/lib/mock-data';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -6,15 +9,19 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Search, Send, MoreVertical, MessageSquare } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export default function MessagesPage() {
+  const [activeThreadId, setActiveThreadId] = useState(MOCK_THREADS[0].id);
+  const activeThread = MOCK_THREADS.find(t => t.id === activeThreadId) || MOCK_THREADS[0];
+
   return (
     <div className="flex h-screen overflow-hidden">
       <NexusSidebar />
       <main className="flex-1 flex flex-col bg-background">
         <div className="flex h-full">
           {/* Threads Sidebar */}
-          <aside className="w-80 border-r border-border flex flex-col">
+          <aside className="w-80 border-r border-border flex flex-col bg-card/10">
             <div className="p-6 border-b border-border">
               <h2 className="text-2xl font-headline font-bold mb-4">Messages</h2>
               <div className="relative">
@@ -27,7 +34,12 @@ export default function MessagesPage() {
                 {MOCK_THREADS.map((thread) => (
                   <div 
                     key={thread.id} 
-                    className={`flex items-center gap-4 p-4 cursor-pointer hover:bg-muted/50 transition-all ${thread.unread ? 'bg-primary/5' : ''}`}
+                    onClick={() => setActiveThreadId(thread.id)}
+                    className={cn(
+                      "flex items-center gap-4 p-4 cursor-pointer hover:bg-muted/50 transition-all",
+                      activeThreadId === thread.id ? "bg-primary/10 border-r-2 border-primary" : "",
+                      thread.unread && activeThreadId !== thread.id ? 'bg-primary/5' : ''
+                    )}
                   >
                     <div className="relative">
                       <Avatar className="w-12 h-12">
@@ -43,11 +55,14 @@ export default function MessagesPage() {
                         <h4 className="font-bold text-sm truncate">{thread.user.name}</h4>
                         <span className="text-[10px] text-muted-foreground">{thread.time}</span>
                       </div>
-                      <p className={`text-xs truncate ${thread.unread ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
+                      <p className={cn(
+                        "text-xs truncate",
+                        thread.unread && activeThreadId !== thread.id ? 'text-primary font-medium' : 'text-muted-foreground'
+                      )}>
                         {thread.lastMessage}
                       </p>
                     </div>
-                    {thread.unread && (
+                    {thread.unread && activeThreadId !== thread.id && (
                       <div className="w-2 h-2 rounded-full bg-primary" />
                     )}
                   </div>
@@ -57,38 +72,62 @@ export default function MessagesPage() {
           </aside>
 
           {/* Chat Window */}
-          <section className="flex-1 flex flex-col bg-card/20">
+          <section className="flex-1 flex flex-col bg-card/5">
             {/* Chat Header */}
-            <header className="p-4 border-b border-border flex items-center justify-between">
+            <header className="p-4 border-b border-border flex items-center justify-between bg-background/50 backdrop-blur-sm">
               <div className="flex items-center gap-3">
-                <Avatar className="w-10 h-10">
-                  <AvatarImage src={MOCK_THREADS[0].user.avatar} />
-                  <AvatarFallback>C</AvatarFallback>
+                <Avatar className="w-10 h-10 border border-primary/20">
+                  <AvatarImage src={activeThread.user.avatar} />
+                  <AvatarFallback>{activeThread.user.name[0]}</AvatarFallback>
                 </Avatar>
                 <div>
-                  <h4 className="font-bold text-sm">{MOCK_THREADS[0].user.name}</h4>
-                  <span className="text-[10px] text-green-500 font-medium">Online</span>
+                  <h4 className="font-bold text-sm">{activeThread.user.name}</h4>
+                  <span className={cn(
+                    "text-[10px] font-medium",
+                    activeThread.user.status === 'online' ? "text-green-500" : "text-muted-foreground"
+                  )}>
+                    {activeThread.user.status === 'online' ? 'Online' : 'Offline'}
+                  </span>
                 </div>
               </div>
-              <Button variant="ghost" size="icon"><MoreVertical className="w-5 h-5" /></Button>
+              <div className="flex gap-1">
+                <Button variant="ghost" size="icon"><MoreVertical className="w-5 h-5" /></Button>
+              </div>
             </header>
 
-            {/* Empty State / Messages */}
-            <div className="flex-1 flex flex-col items-center justify-center text-center p-10">
-               <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                 <MessageSquare className="w-8 h-8 text-primary" />
-               </div>
-               <h3 className="text-xl font-headline font-bold">Your conversation with {MOCK_THREADS[0].user.name}</h3>
-               <p className="text-muted-foreground max-w-sm mt-2">
-                 Send a message to coordinate your next game or share some tips.
-               </p>
-            </div>
+            {/* Messages Area */}
+            <ScrollArea className="flex-1 p-6">
+              <div className="max-w-4xl mx-auto space-y-6">
+                {activeThread.messages.map((msg) => (
+                  <div 
+                    key={msg.id} 
+                    className={cn(
+                      "flex flex-col max-w-[70%]",
+                      msg.sender === 'me' ? "ml-auto items-end" : "items-start"
+                    )}
+                  >
+                    <div className={cn(
+                      "px-4 py-2 rounded-2xl text-sm mb-1 shadow-sm border",
+                      msg.sender === 'me' 
+                        ? "bg-primary text-primary-foreground border-primary rounded-tr-none" 
+                        : "bg-muted/50 text-foreground border-border/50 rounded-tl-none"
+                    )}>
+                      {msg.text}
+                    </div>
+                    <span className="text-[10px] text-muted-foreground px-1">{msg.time}</span>
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
 
             {/* Input Area */}
             <div className="p-4 bg-background border-t border-border">
-              <div className="relative max-w-4xl mx-auto">
-                <Input placeholder="Write a message..." className="pr-12 py-6 bg-muted/20" />
-                <Button size="icon" className="absolute right-2 top-1/2 -translate-y-1/2">
+              <div className="relative max-w-4xl mx-auto flex gap-2">
+                <Input 
+                  placeholder={`Write a message to ${activeThread.user.name}...`} 
+                  className="bg-muted/20 border-border/50 focus:border-primary/50" 
+                />
+                <Button size="icon" className="shrink-0 shadow-lg shadow-primary/20">
                   <Send className="w-4 h-4" />
                 </Button>
               </div>
