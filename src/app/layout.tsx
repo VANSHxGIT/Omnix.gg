@@ -3,7 +3,7 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'Nexus Point | Gamer Connection Hub',
+  title: 'OMNIX.GG | Gamer Connection Hub',
   description: 'Connect, share, and play with compatible gamers around the globe.',
 };
 

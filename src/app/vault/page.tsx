@@ -17,7 +17,7 @@ export default function VaultPage() {
   const [credentials, setCredentials] = useState([
     { platform: 'Valorant', id: 'Ghost#4432', status: 'Public' },
     { platform: 'Minecraft', id: 'TheBuilder_X', status: 'Private' },
-    { platform: 'Discord', id: 'NexusAdmin#0001', status: 'Mutuals Only' },
+    { platform: 'Discord', id: 'OMNIXAdmin#0001', status: 'Mutuals Only' },
     { platform: 'Steam', id: 'Sarahrider', status: 'Public' },
   ]);
 

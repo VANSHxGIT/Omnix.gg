@@ -12,7 +12,7 @@ export default function SettingsPage() {
       <NexusSidebar />
       <main className="flex-1 bg-background p-8">
         <header className="mb-10">
-          <h2 className="text-4xl font-headline font-bold mb-2">Nexus <span className="text-primary">Settings</span></h2>
+          <h2 className="text-4xl font-headline font-bold mb-2">OMNIX <span className="text-primary">Settings</span></h2>
           <p className="text-muted-foreground">Manage your account, privacy, and notifications.</p>
         </header>
 
@@ -68,7 +68,7 @@ export default function SettingsPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <Button variant="destructive">Deactivate Nexus Account</Button>
+              <Button variant="destructive">Deactivate OMNIX Account</Button>
             </CardContent>
           </Card>
         </div>

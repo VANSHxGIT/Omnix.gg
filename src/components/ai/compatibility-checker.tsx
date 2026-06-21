@@ -43,7 +43,7 @@ export function CompatibilityChecker() {
             AI Compatibility Matcher
           </CardTitle>
           <CardDescription>
-            Tell Nexus AI about your gaming style, preferences, and what you look for in a teammate.
+            Tell OMNIX AI about your gaming style, preferences, and what you look for in a teammate.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">

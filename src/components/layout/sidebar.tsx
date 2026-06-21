@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Home, MessageSquare, Shield, Users, Gamepad2, TrendingUp, Settings } from 'lucide-react';
 
 const navItems = [
@@ -14,10 +15,12 @@ export function NexusSidebar() {
   return (
     <aside className="w-64 border-r border-border h-screen sticky top-0 bg-card/50 backdrop-blur-md flex flex-col">
       <div className="p-6">
-        <h1 className="text-2xl font-headline font-bold text-primary flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white">N</div>
-          Nexus Point
-        </h1>
+        <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+          <div className="relative w-8 h-8 rounded-lg overflow-hidden border border-primary/30 shrink-0">
+            <Image src="/images/omnix-logo.png" alt="OMNIX.GG" fill className="object-cover" />
+          </div>
+          <span className="text-2xl font-headline font-bold text-primary neon-text">OMNIX.GG</span>
+        </Link>
       </div>
 
       <nav className="flex-1 px-4 py-2 space-y-1">

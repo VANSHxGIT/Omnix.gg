@@ -18,7 +18,7 @@ export default function Home() {
       <main className="flex-1 overflow-y-auto bg-background p-8">
         <header className="mb-10">
           <h2 className="text-4xl font-headline font-bold mb-2">Welcome Back, <span className="text-primary neon-text">Pilot</span></h2>
-          <p className="text-muted-foreground">Your gaming nexus is ready. {totalPlayersOnline} players online now.</p>
+          <p className="text-muted-foreground">Your gaming cockpit is ready. {totalPlayersOnline} players online now.</p>
         </header>
 
         <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">

@@ -75,7 +75,7 @@ export default function ActivityFeedPage() {
         <header className="mb-10 flex items-center justify-between">
           <div>
             <h2 className="text-4xl font-headline font-bold mb-2">Activity <span className="text-primary neon-text">Feed</span></h2>
-            <p className="text-muted-foreground">What the Nexus community is playing and saying.</p>
+            <p className="text-muted-foreground">What the OMNIX community is playing and saying.</p>
           </div>
 
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
