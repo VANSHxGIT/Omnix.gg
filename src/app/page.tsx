@@ -1,19 +1,24 @@
 import { NexusSidebar } from '@/components/layout/sidebar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { MOCK_GAMES } from '@/lib/mock-data';
+import { MOCK_GAMES, MOCK_REVIEWS, MOCK_USERS } from '@/lib/mock-data';
 import { Gamepad2, Users, Flame } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 
 export default function Home() {
+  const totalPlayersOnline = MOCK_GAMES.reduce((acc, game) => acc + game.playersOnline, 0).toLocaleString();
+  const totalReviews = MOCK_REVIEWS.length;
+  const compatibleMatches = MOCK_USERS.length;
+  const totalHubs = MOCK_GAMES.length;
+
   return (
     <div className="flex min-h-screen">
       <NexusSidebar />
       <main className="flex-1 overflow-y-auto bg-background p-8">
         <header className="mb-10">
           <h2 className="text-4xl font-headline font-bold mb-2">Welcome Back, <span className="text-primary neon-text">Pilot</span></h2>
-          <p className="text-muted-foreground">Your gaming nexus is ready. 12,402 players online now.</p>
+          <p className="text-muted-foreground">Your gaming nexus is ready. {totalPlayersOnline} players online now.</p>
         </header>
 
         <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
@@ -23,7 +28,7 @@ export default function Home() {
               <Flame className="w-4 h-4 text-primary" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">+2,431</div>
+              <div className="text-2xl font-bold">+{totalReviews}</div>
               <p className="text-xs text-muted-foreground">reviews shared today</p>
             </CardContent>
           </Card>
@@ -33,7 +38,7 @@ export default function Home() {
               <Users className="w-4 h-4 text-secondary" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">14</div>
+              <div className="text-2xl font-bold">{compatibleMatches}</div>
               <p className="text-xs text-muted-foreground">new recommendations for you</p>
             </CardContent>
           </Card>
@@ -43,7 +48,7 @@ export default function Home() {
               <Gamepad2 className="w-4 h-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">48</div>
+              <div className="text-2xl font-bold">{totalHubs}</div>
               <p className="text-xs text-muted-foreground">available game chatrooms</p>
             </CardContent>
           </Card>

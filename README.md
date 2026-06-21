@@ -1,22 +1,22 @@
-# 🎮 Nexus Point
+# Nexus Point
 
 **Nexus Point** is a premium, real-time chatting and experience-sharing platform designed specifically for gamers across the globe. Built on Next.js 15, React 19, and Google Genkit AI, it provides a centralized dashboard—a "Gaming Nexus"—where players can share thoughts, coordinate gameplay in game-specific hubs, match with highly compatible squad mates using Generative AI, and securely manage their gaming handles.
 
 ---
 
-## 🚀 Key Features & Use Cases
+##  Key Features & Use Cases
 
-### 💬 1. Dynamic Game Hubs
+###  1. Dynamic Game Hubs
 * **World Chats**: Enter game-specific channels (e.g., *Minecraft*, *Valorant*, *Elden Ring*) to join live global conversations.
 * **Coordination**: Ideal for coordinate-sharing, LFG (Looking for Group) requests, and live feedback on game updates.
 * **Teammate Panels**: Hub sidebars list active players currently inside the hub for instant interaction.
 
-### 🧠 2. AI Teammate Matchmaker
+###  2. AI Teammate Matchmaker
 * **GenAI Analysis**: Powered by Google Genkit & Gemini 2.5 Flash.
 * **Custom Persona Profiles**: Players describe their gaming philosophy, style, and attitude (e.g., "chill play, team-oriented, low toxicity, entry fragger").
 * **Smart Matching**: The AI analyzes preferences against other potential teammates and gives a compatibility rating along with a structured explanation of *why* they fit.
 
-### 🔒 3. Identity Vault
+###  3. Identity Vault
 * **Access Control**: Store and manage handles/IDs across multiple services (Steam, Discord, Minecraft, Valorant, etc.).
 * **Granular Privacy Settings**: Configure access on a per-handle basis:
   * **Public**: Visible to all Nexus Point users.
@@ -24,16 +24,16 @@
   * **Private**: Hidden from the public directory.
 * **Security Logs**: Monitor who has viewed or requested access to your credentials.
 
-### 📰 4. Activity Feed (Experience Sharing)
+###  4. Activity Feed (Experience Sharing)
 * **Mini-Reviews**: Post updates, opinions, and star-rated reviews on recent play sessions.
 * **Community Engagement**: Engage with other players' reviews via liking, commenting, and sharing.
 
-### ✉️ 5. Direct Messaging
+###  5. Direct Messaging
 * **Seamless Chatting**: Instant one-on-one private messaging threads to coordinate game details and build gaming rapport.
 
 ---
 
-## 🎨 Design Language & Aesthetics
+## Design Language & Aesthetics
 
 Nexus Point is designed to feel immersive, modern, and high-performance, mirroring the interface aesthetics of contemporary gaming hardware and client interfaces.
 * **Primary Color**: Vibrant Amethyst (`#9554E8`) - represents energetic digital connection.
@@ -58,7 +58,7 @@ Nexus Point is designed to feel immersive, modern, and high-performance, mirrori
 
 ---
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### 📋 Prerequisites
 * Node.js v18+ or v20+ installed.

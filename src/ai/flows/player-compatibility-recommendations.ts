@@ -74,6 +74,44 @@ const playerCompatibilityRecommendationsFlow = ai.defineFlow(
     outputSchema: PlayerCompatibilityRecommendationsOutputSchema,
   },
   async (input) => {
+    // Fallback if no Gemini key is provided to prevent 500 crashes
+    if (!process.env.GEMINI_API_KEY && !process.env.GOOGLE_API_KEY) {
+      console.warn("GEMINI_API_KEY is not defined. Using rule-based fallback matchmaking.");
+      
+      const playerText = input.currentPlayerProfile.toLowerCase();
+      
+      const recommendations = input.potentialTeammates.map(teammate => {
+        const teammateText = teammate.profile.toLowerCase();
+        const keywords = ['valorant', 'minecraft', 'elden ring', 'tactical', 'shooter', 'casual', 'rpg', 'survival', 'ranked', 'communication', 'chill', 'toxic'];
+        const matchedKeywords = keywords.filter(kw => playerText.includes(kw) && teammateText.includes(kw));
+        
+        let reason = "";
+        
+        if (matchedKeywords.length > 0) {
+          reason += `Shared interests in: ${matchedKeywords.join(', ')}. `;
+        }
+        
+        if (playerText.includes('tactical') && teammateText.includes('strategic')) {
+          reason += "Both value clear strategy and tactical alignment. ";
+        }
+        
+        if (playerText.includes('chill') && teammateText.includes('friendly')) {
+          reason += "Both prefer a relaxed and toxicity-free atmosphere. ";
+        }
+        
+        if (!reason) {
+          reason = "Compatible playstyle and platform preferences matched via user tags.";
+        }
+        
+        return {
+          playerId: teammate.id,
+          compatibilityReason: reason
+        };
+      });
+      
+      return { recommendations };
+    }
+
     const { output } = await playerCompatibilityPrompt(input);
     return output!;
   }

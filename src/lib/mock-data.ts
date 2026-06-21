@@ -14,8 +14,8 @@ export const MOCK_GAMES: Game[] = [
     id: 'minecraft',
     name: 'Minecraft',
     description: 'Build, explore, and survive in an infinite world of blocks.',
-    poster: 'https://picsum.photos/seed/mc-post/300/450',
-    hero: 'https://picsum.photos/seed/mc-landscape/1200/400',
+    poster: '/images/minecraft-poster.png',
+    hero: '/images/minecraft-hero.png',
     category: 'Sandbox',
     playersOnline: 4250,
   },
@@ -23,8 +23,8 @@ export const MOCK_GAMES: Game[] = [
     id: 'valorant',
     name: 'Valorant',
     description: 'A 5v5 character-based tactical shooter where precise gunplay meets unique agent abilities.',
-    poster: 'https://picsum.photos/seed/valo-post/300/450',
-    hero: 'https://picsum.photos/seed/valo-arena/1200/400',
+    poster: '/images/valorant-poster.png',
+    hero: '/images/valorant-hero.png',
     category: 'FPS',
     playersOnline: 8120,
   },
@@ -32,8 +32,8 @@ export const MOCK_GAMES: Game[] = [
     id: 'elden-ring',
     name: 'Elden Ring',
     description: 'Rise, Tarnished, and be guided by grace to brandish the power of the Elden Ring.',
-    poster: 'https://picsum.photos/seed/elden-post/300/450',
-    hero: 'https://picsum.photos/seed/elden-world/1200/400',
+    poster: '/images/elden-ring-poster.png',
+    hero: '/images/elden-ring-hero.png',
     category: 'RPG',
     playersOnline: 1240,
   },
@@ -143,5 +143,42 @@ export const MOCK_USERS: UserProfile[] = [
     bio: 'Casual gamer looking for friendly groups to explore new RPG worlds.',
     gamingIds: { steam: 'SarahPlayz', minecraft: 'SarahC' },
     preferences: 'I enjoy immersive storytelling, exploring map corners, and chatting about game lore.'
+  }
+];
+
+export interface Review {
+  id: string;
+  user: string;
+  avatar: string;
+  game: string;
+  rating: number;
+  content: string;
+  likes: number;
+  comments: number;
+  time: string;
+}
+
+export const MOCK_REVIEWS: Review[] = [
+  {
+    id: 'r1',
+    user: 'CyberCat',
+    avatar: 'https://picsum.photos/seed/cat/40/40',
+    game: 'Minecraft',
+    rating: 5,
+    content: 'Just discovered an amazing seed for survival! The cave systems are incredible and the resource generation is top notch. Anyone want the coords?',
+    likes: 24,
+    comments: 12,
+    time: '45m ago'
+  },
+  {
+    id: 'r2',
+    user: 'ShadowBlade',
+    avatar: 'https://picsum.photos/seed/shadow/40/40',
+    game: 'Valorant',
+    rating: 4,
+    content: 'The new map updates for Haven are actually pretty balanced. Defender rotations feel more dynamic now. Definitely makes B site more viable.',
+    likes: 56,
+    comments: 8,
+    time: '2h ago'
   }
 ];

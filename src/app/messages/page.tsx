@@ -15,6 +15,7 @@ export default function MessagesPage() {
   const [threads, setThreads] = useState<MessageThread[]>(MOCK_THREADS);
   const [activeThreadId, setActiveThreadId] = useState(threads[0].id);
   const [inputValue, setInputValue] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const activeThread = threads.find(t => t.id === activeThreadId) || threads[0];
 
@@ -45,6 +46,10 @@ export default function MessagesPage() {
     setInputValue('');
   };
 
+  const filteredThreads = threads.filter(thread =>
+    thread.user.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="flex h-screen overflow-hidden">
       <NexusSidebar />
@@ -56,12 +61,17 @@ export default function MessagesPage() {
               <h2 className="text-2xl font-headline font-bold mb-4">Messages</h2>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <Input placeholder="Search chats..." className="pl-10 bg-muted/30" />
+                <Input 
+                  placeholder="Search chats..." 
+                  className="pl-10 bg-muted/30" 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
               </div>
             </div>
             <ScrollArea className="flex-1">
               <div className="divide-y divide-border/50">
-                {threads.map((thread) => (
+                {filteredThreads.map((thread) => (
                   <div 
                     key={thread.id} 
                     onClick={() => setActiveThreadId(thread.id)}
