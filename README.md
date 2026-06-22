@@ -1,6 +1,6 @@
-# Nexus Point
+# OMNIX.GG
 
-**Nexus Point** is a premium, real-time chatting and experience-sharing platform designed specifically for gamers across the globe. Built on Next.js 15, React 19, and Google Genkit AI, it provides a centralized dashboard—a "Gaming Nexus"—where players can share thoughts, coordinate gameplay in game-specific hubs, match with highly compatible squad mates using Generative AI, and securely manage their gaming handles.
+**OMNIX.GG** is a premium, real-time chatting and experience-sharing platform designed specifically for gamers across the globe. Built on Next.js 15, React 19, and Google Genkit AI, it provides a centralized dashboard—a "Gaming Hub"—where players can share thoughts, coordinate gameplay in game-specific hubs, match with highly compatible squad mates using Generative AI, and securely manage their gaming handles.
 
 ---
 
@@ -19,7 +19,7 @@
 ###  3. Identity Vault
 * **Access Control**: Store and manage handles/IDs across multiple services (Steam, Discord, Minecraft, Valorant, etc.).
 * **Granular Privacy Settings**: Configure access on a per-handle basis:
-  * **Public**: Visible to all Nexus Point users.
+  * **Public**: Visible to all OMNIX.GG users.
   * **Mutuals Only**: Visible only to accepted teammates.
   * **Private**: Hidden from the public directory.
 * **Security Logs**: Monitor who has viewed or requested access to your credentials.
@@ -35,7 +35,7 @@
 
 ## Design Language & Aesthetics
 
-Nexus Point is designed to feel immersive, modern, and high-performance, mirroring the interface aesthetics of contemporary gaming hardware and client interfaces.
+OMNIX.GG is designed to feel immersive, modern, and high-performance, mirroring the interface aesthetics of contemporary gaming hardware and client interfaces.
 * **Primary Color**: Vibrant Amethyst (`#9554E8`) - represents energetic digital connection.
 * **Background Color**: Deep Obsidian (`#15111B`) - creates a premium high-contrast, focused dark-mode theme.
 * **Accent Color**: Neon Cobalt (`#5471E8`) - provides visual hierarchy and highlights call-to-action details.
@@ -69,7 +69,7 @@ Nexus Point is designed to feel immersive, modern, and high-performance, mirrori
 1. **Clone the repository:**
    ```bash
    git clone <repository-url>
-   cd Nexus-point-main
+   cd omnix-gg
    ```
 
 2. **Install dependencies:**
@@ -100,7 +100,7 @@ Nexus Point is designed to feel immersive, modern, and high-performance, mirrori
 ## 📂 Project Structure
 
 ```text
-nexus-point/
+omnix-gg/
 ├── docs/                        # Project blueprint & design docs
 │   └── blueprint.md             # Visual identity and architecture blueprint
 ├── src/
