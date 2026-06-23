@@ -75,8 +75,10 @@ const playerCompatibilityRecommendationsFlow = ai.defineFlow(
   },
   async (input) => {
     // Fallback if no Gemini key is provided to prevent 500 crashes
-    if (!process.env.GEMINI_API_KEY && !process.env.GOOGLE_API_KEY) {
-      console.warn("GEMINI_API_KEY is not defined. Using rule-based fallback matchmaking.");
+    const geminiKey = process.env.GEMINI_API_KEY || '';
+    const hasValidKey = geminiKey && geminiKey !== 'placeholder' && !geminiKey.includes('your_');
+    if (!hasValidKey && !process.env.GOOGLE_API_KEY) {
+      console.warn("Valid GEMINI_API_KEY is not defined. Using rule-based fallback matchmaking.");
       
       const playerText = input.currentPlayerProfile.toLowerCase();
       

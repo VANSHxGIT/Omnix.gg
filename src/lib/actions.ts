@@ -2,7 +2,7 @@
 
 import { prisma } from './db';
 import { revalidatePath } from 'next/cache';
-import { MOCK_GAMES } from './mock-data';
+import { MOCK_GAMES, MOCK_USERS } from './mock-data';
 
 // 1. Dashboard Stats
 export async function getDashboardStats() {
@@ -170,4 +170,153 @@ export async function getTeammatesCompatibility(profile: string) {
     currentPlayerProfile: profile,
     potentialTeammates,
   });
+}
+
+export async function getUserProfile(nameOrId: string) {
+  // 1. Try finding by ID or name in DB
+  let user = await prisma.user.findFirst({
+    where: {
+      OR: [
+        { id: nameOrId },
+        { name: nameOrId },
+      ],
+    },
+    include: { credentials: true },
+  });
+
+  if (user) {
+    return {
+      id: user.id,
+      name: user.name,
+      avatar: user.avatar,
+      bio: user.bio,
+      preferences: user.preferences,
+      credentials: user.credentials.map((c) => ({
+        platform: c.platform,
+        handle: c.handle,
+        status: c.status,
+      })),
+    };
+  }
+
+  // 2. Try finding in mock data
+  const mockUser = MOCK_USERS.find(
+    (u) => u.id === nameOrId || u.name.toLowerCase() === nameOrId.toLowerCase()
+  );
+  if (mockUser) {
+    return {
+      id: mockUser.id,
+      name: mockUser.name,
+      avatar: mockUser.avatar,
+      bio: mockUser.bio,
+      preferences: mockUser.preferences,
+      credentials: Object.entries(mockUser.gamingIds).map(([platform, handle]) => ({
+        platform: platform.charAt(0).toUpperCase() + platform.slice(1),
+        handle,
+        status: 'Public',
+      })),
+    };
+  }
+
+  // 3. Generate fallback dynamically
+  const cleanName = nameOrId.replace(/[^a-zA-Z0-9_]/g, '');
+  const seed = cleanName.toLowerCase();
+  
+  const defaultBios: Record<string, string> = {
+    BlockMaster: 'Redstone architect and survival world host.',
+    CraftyDev: 'Full-stack developer and Minecraft hobbyist.',
+    JettMain99: 'Valorant competitive player. Aiming for Radiant.',
+    VandalWhiz: 'Loves tactical FPS games and theorycrafting patch updates.',
+    TarnishedOne: 'Elden Ring lore theorist and speedrunner.',
+    GraceSeeker: 'Co-op helper for difficult boss fights in Souls games.',
+    Starlight_99: 'Stardew Valley enthusiast and cozy game streamer.',
+    GamerPro_X: 'FPS enthusiast, casual streamer, and strategy game fan.',
+    CyberCat: 'Cyberpunk fan, coder, and cat lover.',
+    ShadowBlade: 'Assassin main across multiple RPGs.',
+  };
+
+  const defaultPreferences: Record<string, string> = {
+    BlockMaster: 'LFG for survival servers, prefers co-op play and voice chat.',
+    CraftyDev: 'Looking for vanilla survival servers, loves building automation.',
+    JettMain99: 'Looking for a solid Sage/Initiator for competitive ranked lobbies. Gold-Plat.',
+    VandalWhiz: 'Prefers tactical gameplay and coordination. Low-toxicity lobby only.',
+    TarnishedOne: 'Interested in co-op exploration and trade, helping with bosses.',
+    GraceSeeker: 'Available for summon, expert in boss strategy and parrying.',
+    Starlight_99: 'Cozy gaming sessions, friendly chats, and sharing farm layouts.',
+    GamerPro_X: 'Competitive play, serious lobbies but chill vibes.',
+    CyberCat: 'Casual matches, late night lobbies, and synthwave soundtracks.',
+    ShadowBlade: 'PvP arena, stealth builds, and coordinated raids.',
+  };
+
+  const bio = defaultBios[nameOrId] || 'Gaming enthusiast and active community member.';
+  const preferences = defaultPreferences[nameOrId] || 'Enjoys a mix of competitive and casual play. Always down for good teamwork.';
+
+  const defaultCredentials: Record<string, Array<{ platform: string; handle: string; status: string }>> = {
+    BlockMaster: [
+      { platform: 'Minecraft', handle: 'BlockMasterX', status: 'Public' },
+      { platform: 'Discord', handle: 'block#1234', status: 'Mutuals Only' },
+    ],
+    CraftyDev: [
+      { platform: 'Minecraft', handle: 'CraftyDev', status: 'Public' },
+      { platform: 'Steam', handle: 'CraftyDev', status: 'Public' },
+    ],
+    JettMain99: [
+      { platform: 'Valorant', handle: 'Jett#9999', status: 'Public' },
+      { platform: 'Discord', handle: 'jett99#9999', status: 'Mutuals Only' },
+    ],
+    VandalWhiz: [
+      { platform: 'Valorant', handle: 'Whiz#1337', status: 'Public' },
+    ],
+    TarnishedOne: [
+      { platform: 'Steam', handle: 'TarnishedOne', status: 'Public' },
+      { platform: 'Discord', handle: 'tarnished#0001', status: 'Mutuals Only' },
+    ],
+    GraceSeeker: [
+      { platform: 'Steam', handle: 'GraceSeeker', status: 'Public' },
+    ],
+    Starlight_99: [
+      { platform: 'Steam', handle: 'StarLight_99', status: 'Public' },
+      { platform: 'Discord', handle: 'star#9999', status: 'Mutuals Only' },
+    ],
+    GamerPro_X: [
+      { platform: 'Steam', handle: 'GamerPro_X', status: 'Public' },
+      { platform: 'Valorant', handle: 'Pro#1111', status: 'Public' },
+    ],
+    CyberCat: [
+      { platform: 'Steam', handle: 'CyberCat', status: 'Public' },
+      { platform: 'Discord', handle: 'cybercat#0001', status: 'Mutuals Only' },
+    ],
+    ShadowBlade: [
+      { platform: 'Steam', handle: 'ShadowBlade', status: 'Public' },
+      { platform: 'Discord', handle: 'shadow#4444', status: 'Private' },
+    ],
+  };
+
+  const credentials = defaultCredentials[nameOrId] || [
+    { platform: 'Steam', handle: `${cleanName}_play`, status: 'Public' },
+    { platform: 'Discord', handle: `${cleanName}#${Math.floor(1000 + Math.random() * 9000)}`, status: 'Mutuals Only' },
+  ];
+
+  return {
+    id: `fallback-${seed}`,
+    name: nameOrId,
+    avatar: `https://picsum.photos/seed/${seed}/150/150`,
+    bio,
+    preferences,
+    credentials,
+  };
+}
+
+export async function getSingleTeammateCompatibility(teammateId: string, teammateProfile: string) {
+  const currentUser = await prisma.user.findUnique({
+    where: { id: 'u1' }
+  });
+  const currentProfile = currentUser?.preferences || 'I prefer strategic play, good communication, and team-oriented players. Not a fan of toxicity.';
+
+  const result = await getPlayerCompatibilityRecommendations({
+    currentPlayerProfile: currentProfile,
+    potentialTeammates: [{ id: teammateId, profile: teammateProfile }],
+  });
+
+  return result.recommendations[0]?.compatibilityReason || 'No match compatibility reason available.';
 }
