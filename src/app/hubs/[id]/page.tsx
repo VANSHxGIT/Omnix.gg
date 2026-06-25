@@ -4,15 +4,16 @@
 import { useState, use, useEffect } from 'react';
 import { NexusSidebar } from '@/components/layout/sidebar';
 import { MOCK_GAMES, ChatMessage } from '@/lib/mock-data';
-import { getMessages, createMessage, getUserProfile, getSingleTeammateCompatibility } from '@/lib/actions';
-import { notFound } from 'next/navigation';
+import { getMessages, createMessage, getUserProfile, getSingleTeammateCompatibility, deleteMessage } from '@/lib/actions';
+import { notFound, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Send, Users, Sparkles, Shield, Lock, Unlock, MessageSquare, Plus, Loader2 } from 'lucide-react';
+import { Send, Users, Sparkles, Shield, Lock, Unlock, MessageSquare, Plus, Loader2, Trash2 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useToast } from '@/hooks/use-toast';
 import {
   Dialog,
   DialogContent,
@@ -24,9 +25,31 @@ import {
 export default function HubPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const game = MOCK_GAMES.find((g) => g.id === id);
+  const router = useRouter();
+  const { toast } = useToast();
   
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
+
+  const handleDeleteMessage = async (msgId: string) => {
+    const previousMessages = [...messages];
+    setMessages(prev => prev.filter(m => m.id !== msgId));
+    try {
+      await deleteMessage(msgId);
+      toast({
+        title: 'Success',
+        description: 'Message deleted successfully.',
+      });
+    } catch (err) {
+      console.error('Failed to delete message:', err);
+      setMessages(previousMessages);
+      toast({
+        title: 'Error',
+        description: 'Failed to delete message.',
+        variant: 'destructive',
+      });
+    }
+  };
 
   // Interactive profile states
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -163,10 +186,23 @@ export default function HubPage({ params }: { params: Promise<{ id: string }> })
                         </span>
                         <span className="text-[10px] text-muted-foreground">{msg.timestamp}</span>
                       </div>
-                      <div className={`rounded-2xl rounded-tl-none px-4 py-2 text-sm border max-w-[80%] ${
-                        msg.userId === 'me' ? 'bg-primary/20 border-primary/30' : 'bg-muted/40 border-border/50'
-                      }`}>
-                        {msg.content}
+                      <div className="flex items-center gap-2">
+                        <div className={`rounded-2xl rounded-tl-none px-4 py-2 text-sm border max-w-[80%] ${
+                          msg.userId === 'me' ? 'bg-primary/20 border-primary/30' : 'bg-muted/40 border-border/50'
+                        }`}>
+                          {msg.content}
+                        </div>
+                        {msg.userId === 'me' && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+                            onClick={() => handleDeleteMessage(msg.id)}
+                            title="Delete Message"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -356,14 +392,20 @@ export default function HubPage({ params }: { params: Promise<{ id: string }> })
                   <div className="mt-6 flex gap-3">
                     <Button 
                       className="flex-1 bg-secondary hover:bg-secondary/80 text-white rounded-xl gap-2 h-10"
-                      onClick={() => setIsProfileOpen(false)}
+                      onClick={() => {
+                        setIsProfileOpen(false);
+                        router.push(`/messages?user=${encodeURIComponent(profileData.name)}`);
+                      }}
                     >
                       <MessageSquare className="w-4 h-4" /> Message
                     </Button>
                     <Button 
                       variant="outline" 
                       className="flex-1 border-border hover:bg-white/5 rounded-xl gap-2 h-10 text-white hover:text-white"
-                      onClick={() => setIsProfileOpen(false)}
+                      onClick={() => {
+                        setIsProfileOpen(false);
+                        router.push(`/messages?user=${encodeURIComponent(profileData.name)}&invite=true`);
+                      }}
                     >
                       <Plus className="w-4 h-4 text-primary" /> Squad Invite
                     </Button>

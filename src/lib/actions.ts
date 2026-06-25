@@ -41,6 +41,14 @@ export async function createCredential(platform: string, handle: string, status:
   return cred;
 }
 
+export async function deleteCredential(id: string) {
+  const cred = await prisma.credential.delete({
+    where: { id },
+  });
+  revalidatePath('/vault');
+  return cred;
+}
+
 // 3. Activity Feed Reviews
 export async function getReviews() {
   return prisma.review.findMany({
@@ -119,24 +127,73 @@ export async function createMessage(threadId: string, text: string, senderId: st
   return msg;
 }
 
+export async function deleteMessage(id: string) {
+  const msg = await prisma.message.delete({
+    where: { id },
+  });
+  revalidatePath(`/hubs/${msg.threadId}`);
+  revalidatePath('/messages');
+  return msg;
+}
+
 export async function getThreads() {
-  const threadDefinitions = [
-    { id: 't1', user: { name: 'CyberCat', avatar: 'https://picsum.photos/seed/cat/150/150', status: 'online' as const } },
-    { id: 't2', user: { name: 'ShadowBlade', avatar: 'https://picsum.photos/seed/shadow/150/150', status: 'offline' as const } },
-    { id: 't3', user: { name: 'Starlight_99', avatar: 'https://picsum.photos/seed/star/150/150', status: 'online' as const } },
-  ];
+  const dmMessages = await prisma.message.findMany({
+    where: {
+      NOT: {
+        threadId: {
+          in: ['minecraft', 'valorant', 'elden-ring']
+        }
+      }
+    },
+    orderBy: { time: 'asc' }
+  });
+
+  const threadIds = Array.from(new Set(dmMessages.map(m => m.threadId)));
+
+  const defaultThreadIds = ['t1', 't2', 't3'];
+  defaultThreadIds.forEach(id => {
+    if (!threadIds.includes(id)) {
+      threadIds.push(id);
+    }
+  });
+
+  const staticUsers: Record<string, { name: string; avatar: string; status: 'online' | 'offline' }> = {
+    t1: { name: 'CyberCat', avatar: 'https://picsum.photos/seed/cat/150/150', status: 'online' },
+    t2: { name: 'ShadowBlade', avatar: 'https://picsum.photos/seed/shadow/150/150', status: 'offline' },
+    t3: { name: 'Starlight_99', avatar: 'https://picsum.photos/seed/star/150/150', status: 'online' },
+  };
 
   return Promise.all(
-    threadDefinitions.map(async (t) => {
-      const msgs = await prisma.message.findMany({
-        where: { threadId: t.id },
-        orderBy: { time: 'asc' },
-      });
-
+    threadIds.map(async (threadId) => {
+      const msgs = dmMessages.filter(m => m.threadId === threadId);
       const lastMsg = msgs[msgs.length - 1];
 
+      let user = staticUsers[threadId];
+      if (!user) {
+        const otherMsg = msgs.find(m => m.senderId !== 'me' && m.senderId !== 'u1');
+        let name = 'Gamer';
+        let avatar = 'https://picsum.photos/seed/gamer/150/150';
+        
+        if (otherMsg) {
+          name = otherMsg.senderName;
+          avatar = otherMsg.senderAvatar;
+        } else if (threadId.startsWith('t-')) {
+          const rawName = threadId.substring(2);
+          const resolved = await getUserProfile(rawName);
+          name = resolved.name;
+          avatar = resolved.avatar;
+        }
+
+        user = {
+          name,
+          avatar,
+          status: 'online'
+        };
+      }
+
       return {
-        ...t,
+        id: threadId,
+        user,
         lastMessage: lastMsg ? lastMsg.text : 'No messages yet.',
         time: lastMsg
           ? new Date(lastMsg.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
@@ -166,10 +223,24 @@ export async function getTeammatesCompatibility(profile: string) {
     profile: u.preferences,
   }));
 
-  return getPlayerCompatibilityRecommendations({
+  const res = await getPlayerCompatibilityRecommendations({
     currentPlayerProfile: profile,
     potentialTeammates,
   });
+
+  const recommendationsWithProfiles = await Promise.all(
+    res.recommendations.map(async (rec) => {
+      const profileData = await getUserProfile(rec.playerId);
+      return {
+        ...rec,
+        user: profileData,
+      };
+    })
+  );
+
+  return {
+    recommendations: recommendationsWithProfiles,
+  };
 }
 
 export async function getUserProfile(nameOrId: string) {

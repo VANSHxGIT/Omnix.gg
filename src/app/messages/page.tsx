@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import { NexusSidebar } from '@/components/layout/sidebar';
 import { MessageThread } from '@/lib/mock-data';
-import { getThreads, createMessage } from '@/lib/actions';
+import { getThreads, createMessage, getUserProfile } from '@/lib/actions';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -23,8 +23,58 @@ export default function MessagesPage() {
     const fetchThreads = async () => {
       try {
         const data = await getThreads();
-        if (active) {
+        if (!active) return;
+
+        // Check if there is a query param for a user to start chat with
+        const searchParams = new URLSearchParams(window.location.search);
+        const startUser = searchParams.get('user');
+        const isInvite = searchParams.get('invite') === 'true';
+
+        if (startUser) {
+          const existingThread = data.find(t => t.user.name.toLowerCase() === startUser.toLowerCase());
+          if (existingThread) {
+            setThreads(data);
+            setActiveThreadId(existingThread.id);
+            if (isInvite) {
+              setInputValue("Hey! I'd like to invite you to my squad. Let's team up!");
+            }
+          } else {
+            // Retrieve teammate details dynamically
+            try {
+              const profileData = await getUserProfile(startUser);
+              const newThreadId = `t-${profileData.name.toLowerCase().replace(/[^a-z0-9]/g, '')}`;
+              
+              const newThread = {
+                id: newThreadId,
+                user: {
+                  name: profileData.name,
+                  avatar: profileData.avatar,
+                  status: 'online' as const
+                },
+                lastMessage: 'No messages yet.',
+                time: 'Recently',
+                unread: false,
+                messages: []
+              };
+              
+              setThreads([newThread, ...data]);
+              setActiveThreadId(newThreadId);
+              if (isInvite) {
+                setInputValue("Hey! I'd like to invite you to my squad. Let's team up!");
+              }
+            } catch (err) {
+              console.error('Failed to fetch user profile for message routing:', err);
+              setThreads(data);
+              if (data.length > 0) {
+                setActiveThreadId(data[0].id);
+              }
+            }
+          }
+        } else {
           setThreads(data);
+          if (data.length > 0) {
+            setActiveThreadId(data[0].id);
+          }
         }
       } catch (err) {
         console.error('Failed to fetch threads:', err);

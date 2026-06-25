@@ -37,15 +37,90 @@ async function main() {
     },
   });
 
-  console.log('Seeded users:', [user1.name, user2.name]);
+  const user3 = await prisma.user.create({
+    data: {
+      id: 'u3',
+      name: 'CyberCat',
+      avatar: 'https://picsum.photos/seed/cat/150/150',
+      bio: 'Cyberpunk fan, coder, and cat lover.',
+      preferences: 'Casual matches, late night lobbies, and synthwave soundtracks.',
+    },
+  });
 
-  // 3. Create default credentials for the main user (u1)
+  const user4 = await prisma.user.create({
+    data: {
+      id: 'u4',
+      name: 'ShadowBlade',
+      avatar: 'https://picsum.photos/seed/shadow/150/150',
+      bio: 'Assassin main across multiple RPGs.',
+      preferences: 'PvP arena, stealth builds, and coordinated raids.',
+    },
+  });
+
+  const user5 = await prisma.user.create({
+    data: {
+      id: 'u5',
+      name: 'Starlight_99',
+      avatar: 'https://picsum.photos/seed/star/150/150',
+      bio: 'Stardew Valley enthusiast and cozy game streamer.',
+      preferences: 'Cozy gaming sessions, friendly chats, and sharing farm layouts.',
+    },
+  });
+
+  const user6 = await prisma.user.create({
+    data: {
+      id: 'u6',
+      name: 'JettMain99',
+      avatar: 'https://picsum.photos/seed/103/150/150',
+      bio: 'Valorant competitive player. Aiming for Radiant.',
+      preferences: 'Looking for a solid Sage/Initiator for competitive ranked lobbies. Gold-Plat.',
+    },
+  });
+
+  const user7 = await prisma.user.create({
+    data: {
+      id: 'u7',
+      name: 'GamerPro_X',
+      avatar: 'https://picsum.photos/seed/101/150/150',
+      bio: 'FPS enthusiast, casual streamer, and strategy game fan.',
+      preferences: 'Competitive play, serious lobbies but chill vibes.',
+    },
+  });
+
+  console.log('Seeded users:', [user1.name, user2.name, user3.name, user4.name, user5.name, user6.name, user7.name]);
+
+  // 3. Create default credentials
   await prisma.credential.createMany({
     data: [
+      // u1 (Pilot_Alex)
       { platform: 'Valorant', handle: 'Ghost#4432', status: 'Public', userId: 'u1' },
       { platform: 'Minecraft', handle: 'TheBuilder_X', status: 'Private', userId: 'u1' },
       { platform: 'Discord', handle: 'OMNIXAdmin#0001', status: 'Mutuals Only', userId: 'u1' },
       { platform: 'Steam', handle: 'Sarahrider', status: 'Public', userId: 'u1' },
+
+      // u2 (Sarah Craft)
+      { platform: 'Steam', handle: 'SarahPlayz', status: 'Public', userId: 'u2' },
+      { platform: 'Minecraft', handle: 'SarahC', status: 'Public', userId: 'u2' },
+
+      // u3 (CyberCat)
+      { platform: 'Steam', handle: 'CyberCat', status: 'Public', userId: 'u3' },
+      { platform: 'Discord', handle: 'cybercat#0001', status: 'Mutuals Only', userId: 'u3' },
+
+      // u4 (ShadowBlade)
+      { platform: 'Steam', handle: 'ShadowBlade', status: 'Public', userId: 'u4' },
+      { platform: 'Discord', handle: 'shadow#4444', status: 'Private', userId: 'u4' },
+
+      // u5 (Starlight_99)
+      { platform: 'Steam', handle: 'StarLight_99', status: 'Public', userId: 'u5' },
+      { platform: 'Discord', handle: 'star#9999', status: 'Mutuals Only', userId: 'u5' },
+
+      // u6 (JettMain99)
+      { platform: 'Valorant', handle: 'Jett#9999', status: 'Public', userId: 'u6' },
+      { platform: 'Discord', handle: 'jett99#9999', status: 'Mutuals Only', userId: 'u6' },
+
+      // u7 (GamerPro_X)
+      { platform: 'Steam', handle: 'GamerPro_X', status: 'Public', userId: 'u7' },
+      { platform: 'Valorant', handle: 'Pro#1111', status: 'Public', userId: 'u7' },
     ],
   });
 

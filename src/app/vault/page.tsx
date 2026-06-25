@@ -3,25 +3,25 @@
 import { useState, useEffect } from 'react';
 import { NexusSidebar } from '@/components/layout/sidebar';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Shield, Key, Eye, EyeOff, Plus, Gamepad, Copy, Check } from 'lucide-react';
+import { Shield, Key, Eye, EyeOff, Plus, Gamepad, Copy, Check, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { getCredentials, createCredential } from '@/lib/actions';
+import { getCredentials, createCredential, deleteCredential } from '@/lib/actions';
 
 export default function VaultPage() {
   const { toast } = useToast();
   
-  const [credentials, setCredentials] = useState<{ platform: string; id: string; status: string }[]>([]);
+  const [credentials, setCredentials] = useState<{ dbId?: string; platform: string; id: string; status: string }[]>([]);
 
   useEffect(() => {
     const loadCredentials = async () => {
       try {
         const data = await getCredentials();
-        setCredentials(data.map(c => ({ platform: c.platform, id: c.handle, status: c.status })));
+        setCredentials(data.map(c => ({ dbId: c.id, platform: c.platform, id: c.handle, status: c.status })));
       } catch (err) {
         console.error('Failed to load credentials:', err);
       }
@@ -69,13 +69,40 @@ export default function VaultPage() {
     setIsOpen(false);
 
     try {
-      await createCredential(newCred.platform, newCred.id, newCred.status);
+      const created = await createCredential(newCred.platform, newCred.id, newCred.status);
+      setCredentials(prev => prev.map(c => c.platform === newCred.platform ? { ...c, dbId: created.id } : c));
       toast({
         title: 'Success',
         description: `Added credential for ${newCred.platform}.`,
       });
     } catch (err) {
       console.error('Failed to save credential:', err);
+    }
+  };
+
+  const handleDeleteCredential = async (dbId?: string, platformName?: string) => {
+    if (!dbId) {
+      setCredentials(prev => prev.filter(c => c.platform !== platformName));
+      return;
+    }
+
+    const previousCredentials = [...credentials];
+    setCredentials(prev => prev.filter(c => c.dbId !== dbId));
+
+    try {
+      await deleteCredential(dbId);
+      toast({
+        title: 'Success',
+        description: `Deleted credential for ${platformName}.`,
+      });
+    } catch (err) {
+      console.error('Failed to delete credential:', err);
+      setCredentials(previousCredentials);
+      toast({
+        title: 'Error',
+        description: `Failed to delete credential for ${platformName}.`,
+        variant: 'destructive',
+      });
     }
   };
 
@@ -131,8 +158,13 @@ export default function VaultPage() {
                             <Copy className="w-4 h-4 opacity-50 hover:opacity-100" />
                           )}
                         </Button>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
-                          <Key className="w-4 h-4 opacity-50" />
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                          onClick={() => handleDeleteCredential(cred.dbId, cred.platform)}
+                        >
+                          <Trash2 className="w-4 h-4 opacity-50 hover:opacity-100" />
                         </Button>
                       </div>
                     </div>
